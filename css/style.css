@@ -1,0 +1,83 @@
+body {
+    background-color: #f8f9fa;
+}
+
+/* 队伍名称悬停显示成员的样式 */
+.team-name {
+    position: relative;
+    cursor: help;
+    border-bottom: 1px dotted #0d6efd;
+    color: #0d6efd;
+}
+
+.team-name::after {
+    content: attr(data-members);
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    margin-bottom: 5px;
+    padding: 8px 12px;
+    background-color: #333;
+    color: white;
+    border-radius: 4px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s, visibility 0.2s;
+    z-index: 1000;
+    font-size: 0.9em;
+}
+
+.team-name:hover::after {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* 为时间轴中的队伍名称添加特殊样式 */
+.timeline-content p strong + .team-name {
+    border-bottom: 1px dotted #0d6efd;
+}
+
+.page {
+    display: none; /* 默认隐藏所有页面 */
+}
+
+.page.active {
+    display: block; /* 只显示当前活动页面 */
+}
+
+/* Timeline 样式 */
+.timeline {
+    position: relative;
+    padding: 20px 0;
+}
+.timeline::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 18px;
+    height: 100%;
+    width: 4px;
+    background: #e9ecef;
+}
+.timeline-item {
+    position: relative;
+    margin-bottom: 20px;
+    padding-left: 40px;
+}
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: 11px;
+    top: 5px;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: #0d6efd;
+    border: 3px solid #fff;
+    z-index: 1;
+}
+.timeline-date {
+    font-weight: bold;
+    color: #6c757d;
+}
