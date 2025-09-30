@@ -7,6 +7,16 @@ let fuse; // 用于模糊搜索
 let dataInitialized = false; // 标记数据是否已初始化
 let playersWithFirstLetter = []; // 存储选手姓名和拼音首字母的数组
 
+// 获取奖项对应的CSS类
+function getAwardClass(award) {
+    if (!award) return '';
+    if (award.includes('金')) return 'award-gold';
+    else if (award.includes('银')) return 'award-silver';
+    else if (award.includes('铜')) return 'award-bronze';
+    else if (award.includes('铁')) return 'award-iron';
+    return '';
+}
+
 // 全局配置对象，用于存储用户的显示设置
 let userSettings = {
     showSolved: true, // 是否显示通过数
@@ -41,32 +51,32 @@ function saveUserSettings() {
 const templates = {
     'search-player': `
         <div class="page active" id="search-player">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h2>查询选手获奖记录</h2>
-                <button id="settings-btn" class="btn btn-outline-secondary">
-                    <i class="bi bi-gear"></i> 设置
-                </button>
-            </div>
             <div class="mb-3">
-                <input type="text" id="player-search-input" class="form-control" placeholder="输入选手姓名...">
+                <div class="input-group">
+                    <input type="text" id="player-search-input" class="form-control" placeholder="输入选手姓名...">
+                    <button id="settings-btn" class="btn btn-outline-secondary">
+                        <i class="bi bi-gear"></i> 设置
+                    </button>
+                </div>
             </div>
             <div id="player-results"></div>
         </div>`,
+        
     'search-contest': `
         <div class="page" id="search-contest">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h2>查询比赛获奖记录</h2>
-                <button id="settings-btn" class="btn btn-outline-secondary">
-                    <i class="bi bi-gear"></i> 设置
-                </button>
-            </div>
             <div class="mb-3">
-                <select id="contest-select" class="form-select"></select>
+                <div class="input-group">
+                    <select id="contest-select" class="form-select"></select>
+                    <button id="settings-btn" class="btn btn-outline-secondary">
+                        <i class="bi bi-gear"></i> 设置
+                    </button>
+                </div>
             </div>
             <!-- 比赛信息介绍容器 -->
             <div id="contest-info" class="mb-3 p-3 bg-light border rounded"></div>
             <div id="contest-results"></div>
         </div>`,
+        
     
     'settings-modal': `
         <div class="modal fade" id="settings-modal" tabindex="-1" aria-labelledby="settings-modal-label" aria-hidden="true">
@@ -107,7 +117,6 @@ const templates = {
         </div>`,
     'all-records': `
         <div class="page" id="all-records">
-            <h2>所有获奖记录 (个人)</h2>
             <table class="table table-striped table-hover table-sm">
                 <thead id="all-records-thead">
                     <tr>
@@ -119,22 +128,22 @@ const templates = {
         </div>`,
     'player-ranking': `
         <div class="page" id="player-ranking">
-            <h2>选手排名</h2>
             <p class="text-muted small">
                 排名规则: 奖项基础分(金=10, 银=7, 铜=5, 铁=2) × 级别权重(区域Final=2, 国赛=1.8, 区域赛=1.5, 邀请赛=1.2, 省赛/女生赛=1, 网络赛=0.5)。
             </p>
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>#</th><th>选手</th><th>总分</th><th>奖牌详情</th>
-                    </tr>
-                </thead>
-                <tbody id="ranking-tbody"></tbody>
-            </table>
+            <div class="ranking-table-container">
+                <table class="ranking-table">
+                    <thead>
+                        <tr>
+                            <th>#</th><th class="player-column">选手</th><th>总分</th><th class="award-column">奖牌详情</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ranking-tbody"></tbody>
+                </table>
+            </div>
         </div>`,
     'visualization': `
         <div class="page" id="visualization">
-            <h2>成绩可视化分析</h2>
             <p class="lead">分析：获得 <strong>A级别比赛</strong> 的 <strong>某个奖项</strong> 的选手，他们在 <strong>B级别比赛</strong> 中的排名分布如何？（注：仅使用同一赛季的数据）</p>
             <div class="row g-3 align-items-center mb-4">
                 <div class="col-md-5">
@@ -158,7 +167,6 @@ const templates = {
         </div>`,
     'timeline': `
         <div class="page" id="timeline">
-            <h2>大事记</h2>
             <div id="timeline-container" class="timeline"></div>
         </div>`
 };
@@ -993,7 +1001,13 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         
-        let html = `<h3>${name} 的获奖记录 (${records.length}条)</h3>`;
+        // 创建标题和分享按钮在同一行的容器
+        let html = `<div class="d-flex justify-content-between items-center mb-3">
+                        <h3 class="m-0">${name} 的获奖记录 (${records.length}条)</h3>
+                        <button id="share-btn" class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-share"></i> 复制分享链接
+                        </button>
+                    </div>`;
         
         // 添加选手简介
         if (totalContests > 0) {
@@ -1003,14 +1017,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         <table class="table table-sm">
                             <thead>
                                 <tr>
-                                    <th>比赛类型</th>
-                                    <th>比赛级别</th>
-                                    <th>参赛次数</th>
-                                    <th>最高排名</th>
-                                    <th>金奖</th>
-                                    <th>银奖</th>
-                                    <th>铜奖</th>
-                                    <th>铁牌</th>
+                                    <th style="text-align: center; font-weight: 600; line-height: 1.5;">比赛类型</th>
+                                    <th style="font-weight: 600; line-height: 1.5;">比赛级别</th>
+                                    <th style="font-weight: 600; line-height: 1.5;">参赛次数</th>
+                                    <th style="font-weight: 600; line-height: 1.5;">最高排名</th>
+                                    <th style="background-color: #ffd700; color: #333; font-weight: 600; padding: 0.75rem 1rem; border-radius: 4px; line-height: 1.5;">金奖</th>
+                                    <th style="background-color: #c0c0c0; color: #333; font-weight: 600; padding: 0.75rem 1rem; border-radius: 4px; line-height: 1.5;">银奖</th>
+                                    <th style="background-color: #cd7f32; color: white; font-weight: 600; padding: 0.75rem 1rem; border-radius: 4px; line-height: 1.5;">铜奖</th>
+                                    <th style="background-color: #8b8b8b; color: white; font-weight: 600; padding: 0.75rem 1rem; border-radius: 4px; line-height: 1.5;">铁牌</th>
                                 </tr>
                             </thead>
                             <tbody>`;
@@ -1044,15 +1058,31 @@ document.addEventListener('DOMContentLoaded', () => {
             // 显示排序后的统计数据
             sortedStats.forEach(stats => {
                 const maxRankDisplay = stats.maxRank === Infinity ? 'N/A' : stats.maxRank;
+                
+                // 添加比赛类型和级别的颜色类
+                const typeClass = stats.type.includes('ICPC') ? 'type-icpc' : stats.type.includes('CCPC') ? 'type-ccpc' : 'type-other';
+                let levelClass = '';
+                switch (stats.level) {
+                    case '区域赛Final': levelClass = 'level-regional-final'; break;
+                    case '国赛': levelClass = 'level-national'; break;
+                    case '区域赛': levelClass = 'level-regional'; break;
+                    case '邀请赛': levelClass = 'level-invitation'; break;
+                    case '省赛': levelClass = 'level-provincial'; break;
+                    case '女生赛':
+                    case '女生专场': levelClass = 'level-girls'; break;
+                    case '网络赛': levelClass = 'level-online'; break;
+                    default: levelClass = '';
+                }
+                
                 html += `<tr>
-                            <td>${stats.type}</td>
-                            <td>${stats.level}</td>
+                            <td class="text-center"><span class="${typeClass}">${stats.type}</span></td>
+                            <td><span class="${levelClass}">${stats.level}</span></td>
                             <td>${stats.count}</td>
                             <td>${maxRankDisplay}</td>
-                            <td>${stats.awards['金奖']}</td>
-                            <td>${stats.awards['银奖']}</td>
-                            <td>${stats.awards['铜奖']}</td>
-                            <td>${stats.awards['铁牌']}</td>
+                            <td class="${stats.awards['金奖'] > 0 ? 'award-cell-gold' : ''}">${stats.awards['金奖']}</td>
+                            <td class="${stats.awards['银奖'] > 0 ? 'award-cell-silver' : ''}">${stats.awards['银奖']}</td>
+                            <td class="${stats.awards['铜奖'] > 0 ? 'award-cell-bronze' : ''}">${stats.awards['铜奖']}</td>
+                            <td class="${stats.awards['铁牌'] > 0 ? 'award-cell-iron' : ''}">${stats.awards['铁牌']}</td>
                         </tr>`;
             });
             
@@ -1060,11 +1090,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>`;
         }
         
-        html += `<div class="mb-3">
-                    <button id="share-btn" class="btn btn-sm btn-outline-secondary">
-                        <i class="bi bi-share"></i> 复制分享链接
-                    </button>
-                </div>`;
+        // 美化的获奖记录表格
+        html += `<div class="player-awards-container">`;
         
         // 构建表头，根据用户设置添加列
         let thead = '<thead><tr>';
@@ -1087,9 +1114,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 '-';
             
             // 将比赛名称改为可点击链接，通过URL参数传递比赛名称
-            html += `<tr><td><a href="#" onclick="navigateToWithContest('${encodeURIComponent(r.contestName)}'); return false;">${r.contestName}</a></td><td>${teamWithTooltip}</td><td>${r.award}</td><td>${r.date || 'N/A'}</td><td>${r.rank > 0 ? r.rank : 'N/A'}</td>`;
+            // 奖项使用span进行美化
+            let awardHtml = r.award;
+            if (r.award && r.award.includes('金奖')) {
+                awardHtml = `<span class="award-gold">${r.award}</span>`;
+            } else if (r.award && r.award.includes('银奖')) {
+                awardHtml = `<span class="award-silver">${r.award}</span>`;
+            } else if (r.award && r.award.includes('铜奖')) {
+                awardHtml = `<span class="award-bronze">${r.award}</span>`;
+            } else if (r.award && r.award.includes('铁牌')) {
+                awardHtml = `<span class="award-iron">${r.award}</span>`;
+            }
+            html += `<tr><td><a href="#" onclick="navigateToWithContest('${encodeURIComponent(r.contestName)}'); return false;">${r.contestName}</a></td><td class="team-name-cell">${teamWithTooltip}</td><td class="award-center-cell">${awardHtml}</td><td>${r.date || 'N/A'}</td><td>${r.rank > 0 ? r.rank : 'N/A'}</td>`;
             if (userSettings.showContestLevel) html += `<td>${r.contestLevel || '-'}</td>`;
-            if (userSettings.showContestType) html += `<td>${r.contestType || '-'}</td>`;
+            if (userSettings.showContestType) {
+                // 为比赛类型添加颜色类
+                const typeClass = r.contestType && r.contestType.includes('ICPC') ? 'type-icpc' : r.contestType && r.contestType.includes('CCPC') ? 'type-ccpc' : 'type-other';
+                html += `<td><span class="${typeClass}">${r.contestType || '-'}</span></td>`;
+            }
             if (userSettings.showSolved) html += `<td>${r.solved || '0'}</td>`;
             if (userSettings.showPenalty) html += `<td>${r.penalty || '0'}</td>`;
             if (userSettings.showNotes) html += `<td>${r.notes || '-'}</td>`;
@@ -1097,6 +1139,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         
         html += `</tbody></table>`;
+        html += `</div>`;
         resultsDiv.innerHTML = html;
         
         // 添加分享按钮点击事件
@@ -1142,17 +1185,31 @@ document.addEventListener('DOMContentLoaded', () => {
             const contestInfo = records[0];
             
             let infoHtml = `<h4 class="mb-2">${contestName} 比赛信息</h4>`;
-            infoHtml += `<div class="grid grid-cols-1 md:grid-cols-2 gap-2">`;
+            infoHtml += `<div class="contest-info-grid">`;
             
-            // 提取并显示比赛信息
-            if (contestInfo.date) {
-                infoHtml += `<div><strong>比赛时间:</strong> ${contestInfo.date}</div>`;
-            }
+            // 提取并显示比赛信息，实现多信息同行
+            const infoItems = [];
+            if (contestInfo.date) infoItems.push(`<span><strong>时间:</strong> ${contestInfo.date}</span>`);
             if (contestInfo.contestLevel) {
-                infoHtml += `<div><strong>比赛级别:</strong> ${contestInfo.contestLevel}</div>`;
+                // 为比赛级别添加颜色类
+                let levelClass = '';
+                switch (contestInfo.contestLevel) {
+                    case '区域赛Final': levelClass = 'level-regional-final'; break;
+                    case '国赛': levelClass = 'level-national'; break;
+                    case '区域赛': levelClass = 'level-regional'; break;
+                    case '邀请赛': levelClass = 'level-invitation'; break;
+                    case '省赛': levelClass = 'level-provincial'; break;
+                    case '女生赛':
+                    case '女生专场': levelClass = 'level-girls'; break;
+                    case '网络赛': levelClass = 'level-online'; break;
+                    default: levelClass = '';
+                }
+                infoItems.push(`<span><strong>级别:</strong> <span class="${levelClass}">${contestInfo.contestLevel}</span></span>`);
             }
             if (contestInfo.contestType) {
-                infoHtml += `<div><strong>比赛类型:</strong> ${contestInfo.contestType}</div>`;
+                // 为比赛类型添加颜色类
+                const typeClass = contestInfo.contestType.includes('ICPC') ? 'type-icpc' : contestInfo.contestType.includes('CCPC') ? 'type-ccpc' : 'type-other';
+                infoItems.push(`<span><strong>类型:</strong> <span class="${typeClass}">${contestInfo.contestType}</span></span>`);
             }
             
             // 计算参与队伍数和获奖队伍数
@@ -1168,10 +1225,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
             
-            infoHtml += `<div><strong>参与队伍数:</strong> ${uniqueTeams.size}</div>`;
-            infoHtml += `<div><strong>获奖队伍数:</strong> ${awardTeams.size}</div>`;
-            infoHtml += `<div><strong>学校排名:</strong> ${schoolRank}</div>`;
+            // 添加计算信息
+            infoItems.push(`<span><strong>参与队伍:</strong> ${uniqueTeams.size}</span>`);
+            infoItems.push(`<span><strong>获奖队伍:</strong> ${awardTeams.size}</span>`);
+            infoItems.push(`<span><strong>学校排名:</strong> ${schoolRank}</span>`);
             
+            // 将信息项添加到HTML中
+            infoHtml += infoItems.join(' | ');
             infoHtml += `</div>`;
             
             contestInfoContainer.innerHTML = infoHtml;
@@ -1213,13 +1273,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 `<span class="team-name" data-members="${r.membersStr || r.teamMembers || '-'}">${teamName}</span>` : 
                 teamName;
                 
-            html += `<tr>
-                <td>${teamWithTooltip}</td>
-                <td>${r.award || '未知'}</td>
+            // 为奖项添加颜色类和背景样式
+                let awardClass = '';
+                let awardText = r.award || '未知';
+                if (r.award) {
+                    if (r.award.includes('金')) awardClass = 'award-gold';
+                    else if (r.award.includes('银')) awardClass = 'award-silver';
+                    else if (r.award.includes('铜')) awardClass = 'award-bronze';
+                    else if (r.award.includes('铁')) awardClass = 'award-iron';
+                }
+                
+                html += `<tr>
+                <td class="team-name-cell">${teamWithTooltip}</td>
+                <td class="award-detail-cell" style="text-align: center"><span class="${awardClass}">${awardText}</span></td>
                 <td>${r.rank > 0 ? r.rank : 'N/A'}</td>`;
             if (userSettings.showSolved) html += `<td>${r.solved || '0'}</td>`;
             if (userSettings.showPenalty) html += `<td>${r.penalty || '0'}</td>`;
-            if (userSettings.showContestType) html += `<td>${r.contestType || '-'}</td>`;
+            if (userSettings.showContestType) {
+                // 为比赛类型添加颜色类
+                const typeClass = r.contestType && r.contestType.includes('ICPC') ? 'type-icpc' : r.contestType && r.contestType.includes('CCPC') ? 'type-ccpc' : 'type-other';
+                html += `<td><span class="${typeClass}">${r.contestType || '-'}</span></td>`;
+            }
             if (userSettings.showNotes) html += `<td>${r.notes || '-'}</td>`;
             html += `</tr>`;
         });
@@ -1323,13 +1397,38 @@ document.addEventListener('DOMContentLoaded', () => {
                 `<span class="team-name" data-members="${r.membersStr || '-'}">${teamName}</span>` : 
                 '';
                 
+            // 为比赛级别添加颜色类
+            let levelClass = '';
+            if (r.contestLevel) {
+                switch (r.contestLevel) {
+                    case '区域赛Final': levelClass = 'level-regional-final'; break;
+                    case '国赛': levelClass = 'level-national'; break;
+                    case '区域赛': levelClass = 'level-regional'; break;
+                    case '邀请赛': levelClass = 'level-invitation'; break;
+                    case '省赛': levelClass = 'level-provincial'; break;
+                    case '女生赛':
+                    case '女生专场': levelClass = 'level-girls'; break;
+                    case '网络赛': levelClass = 'level-online'; break;
+                    default: levelClass = '';
+                }
+            }
+            
+            // 为奖项添加颜色类
+            let awardClass = '';
+            if (r.award) {
+                if (r.award.includes('金')) awardClass = 'award-gold';
+                else if (r.award.includes('银')) awardClass = 'award-silver';
+                else if (r.award.includes('铜')) awardClass = 'award-bronze';
+                else if (r.award.includes('铁')) awardClass = 'award-iron';
+            }
+            
             html += `<tr>
                         <td>${r.date || 'N/A'}</td>
                         <td>${r.contestName || r.contest || ''}</td>
-                        <td>${r.contestLevel || ''}</td>
+                        <td><span class="${levelClass}">${r.contestLevel || ''}</span></td>
                         <td>${r.name || ''}</td>
-                        <td>${teamWithTooltip}</td>
-                        <td>${r.award || ''}</td>
+                        <td class="team-name-cell">${teamWithTooltip}</td>
+                        <td><span class="${awardClass}">${r.award || ''}</span></td>
                         <td>${r.rank > 0 ? r.rank : 'N/A'}</td>`;
             if (userSettings.showSolved) html += `<td>${r.solved || '0'}</td>`;
             if (userSettings.showPenalty) html += `<td>${r.penalty || '0'}</td>`;
@@ -1381,20 +1480,71 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let html = '';
         sortedPlayers.forEach(([name, data], index) => {
+            // 为奖项详情添加颜色类
+            // 先将奖牌详情按照比赛级别为第一关键字，奖项为第二关键字从高到低排序
             const awardsDetail = Object.entries(data.awards)
-                .map(([award, count]) => `${award} x${count}`)
+                .sort(([key1], [key2]) => {
+                    // 提取比赛级别和奖项
+                    const [level1, award1] = key1.split(' ');
+                    const [level2, award2] = key2.split(' ');
+                    
+                    // 获取对应级别的权重值
+                    const weight1 = levelWeights[level1] || 1.0;
+                    const weight2 = levelWeights[level2] || 1.0;
+                    
+                    // 首先按比赛级别权重降序排序
+                    if (weight1 !== weight2) {
+                        return weight2 - weight1;
+                    }
+                    
+                    // 比赛级别相同时，按奖项优先级排序（金奖 > 银奖 > 铜奖 > 铁牌）
+                    const awardPriority = { '金奖': 4, '银奖': 3, '铜奖': 2, '铁牌': 1 };
+                    const priority1 = awardPriority[award1] || 0;
+                    const priority2 = awardPriority[award2] || 0;
+                    
+                    return priority2 - priority1;
+                })
+                .map(([awardKey, count]) => {
+                    const [level, award] = awardKey.split(' ');
+                    
+                    // 为比赛级别添加颜色类
+                    let levelClass = '';
+                    switch (level) {
+                        case '区域Final': levelClass = 'level-regional-final'; break;
+                        case '国赛': levelClass = 'level-national'; break;
+                        case '区域赛': levelClass = 'level-regional'; break;
+                        case '邀请赛': levelClass = 'level-invitation'; break;
+                        case '省赛': levelClass = 'level-provincial'; break;
+                        case '女生专场': levelClass = 'level-girls'; break;
+                        case '网络赛': levelClass = 'level-online'; break;
+                        default: levelClass = '';
+                    }
+                    
+                    // 为奖项添加颜色类
+                    let awardClass = '';
+                    if (award) {
+                        if (award.includes('金')) awardClass = 'award-gold';
+                        else if (award.includes('银')) awardClass = 'award-silver';
+                        else if (award.includes('铜')) awardClass = 'award-bronze';
+                        else if (award.includes('铁')) awardClass = 'award-iron';
+                    }
+                    
+                    return `<span class="${levelClass}">${level}</span> <span class="${awardClass}">${award}</span> x${count}`;
+                })
                 .join(', ');
             // 使用链接标签替代按钮，避免复杂的引号转义
             const encodedName = encodeURIComponent(name);
             html += `<tr>
                         <td>${index + 1}</td>
-                        <td>
+                        <td class="player-name-cell">
                             <a href="#search-player" class="text-primary player-name-link" data-player-name="${name}">
                                 ${name}
                             </a>
                         </td>
                         <td>${data.total.toFixed(2)}</td>
-                        <td>${awardsDetail}</td>
+                        <td class="award-detail-cell">
+                            <div class="award-content-wrapper">${awardsDetail}</div>
+                        </td>
                      </tr>`;
         });
         
@@ -1475,26 +1625,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 box-sizing: border-box;
                 margin-bottom: 20px;
             }
-            .timeline-item::after {
-                content: '';
-                position: absolute;
-                width: 25px;
-                height: 25px;
-                right: -12px;
-                background-color: white;
-                border: 4px solid #FF9F55;
-                top: 15px;
-                border-radius: 50%;
-                z-index: 1;
-            }
             .left {
                 left: 0;
             }
             .right {
                 left: 50%;
-            }
-            .right::after {
-                left: -12px;
             }
             .timeline-content {
                 padding: 20px 30px;
@@ -1502,6 +1637,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 position: relative;
                 border-radius: 6px;
                 box-shadow: 0 0 10px rgba(0,0,0,0.1);
+                transition: all 0.3s ease;
+            }
+            .timeline-content:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 5px 15px rgba(0,0,0,0.15);
             }
             .season-heading {
                 text-align: center;
@@ -1522,9 +1662,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     width: 100%;
                     padding-left: 70px;
                     padding-right: 25px;
-                }
-                .timeline-item::after {
-                    left: 18px;
                 }
                 .left, .right {
                     left: 0;
@@ -1553,7 +1690,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="timeline-item ${isLeft ? 'left' : 'right'}">
                         <div class="timeline-content">
                             <h4>${r['比赛时间'] || 'N/A'}</h4>
-                            <h5>${r['比赛名称'] || '未知比赛'} - <span class="badge bg-success">${r['奖项'] || '未知奖项'}</span></h5>
+                            <h5>${r['比赛名称'] || '未知比赛'}</h5>
+                            <p class="mb-1">
+                                <strong>奖项:</strong> <span class="timeline-award ${getAwardClass(r['奖项'] || '')}">${r['奖项'] || '未知奖项'}</span>
+                            </p>
                             <p class="mb-1">
                                 <strong>队伍:</strong> ${r['队伍名称'] ? 
                                     `<span class="team-name" data-members="${r['队伍成员'] || '未知成员'}">${r['队伍名称']}</span>` : 

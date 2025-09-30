@@ -1,20 +1,397 @@
+/* 基础样式 - 亮色主题 */
 body {
+    background-color: #ffffff;
+    color: #333333;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* 导航栏样式 */
+.navbar {
+    border-bottom: 1px solid #eaeaea;
+    transition: all 0.3s ease;
+}
+
+.navbar-brand {
+    font-weight: 600;
+    font-size: 1.25rem;
+    color: #2c3e50 !important;
+}
+
+.nav-link {
+    color: #5a6c7d !important;
+    font-weight: 500;
+    position: relative;
+    padding: 0.5rem 1rem;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+
+/* 奖项表头样式 */
+.award-header-gold {
+    background-color: #ffd700 !important;
+    color: #333 !important;
+    font-weight: bold !important;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1) !important;
+    padding: 15px 10px !important;
+    border: 2px solid #ffc107 !important;
+    border-radius: 4px !important;
+    font-size: 1.1em !important;
+}
+
+.award-header-silver {
+    background-color: #c0c0c0 !important;
+    color: #333 !important;
+    font-weight: bold !important;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1) !important;
+    padding: 15px 10px !important;
+    border: 2px solid #adb5bd !important;
+    border-radius: 4px !important;
+    font-size: 1.1em !important;
+}
+
+.award-header-bronze {
+    background-color: #cd7f32 !important;
+    color: white !important;
+    font-weight: bold !important;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3) !important;
+    padding: 15px 10px !important;
+    border: 2px solid #d68c45 !important;
+    border-radius: 4px !important;
+    font-size: 1.1em !important;
+}
+
+.award-header-iron {
+    background-color: #8b8b8b !important;
+    color: white !important;
+    font-weight: bold !important;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3) !important;
+    padding: 15px 10px !important;
+    border: 2px solid #6c757d !important;
+    border-radius: 4px !important;
+    font-size: 1.1em !important;
+}
+
+/* 选手获奖记录容器样式 */
+.player-awards-container {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    padding: 1px;
+    margin-bottom: 1rem;
+}
+
+/* 奖项徽章样式 */
+.award-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    text-align: center;
+    display: inline-block;
+    min-width: 60px;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.2);
+}
+
+/* 比赛查询页面奖项列居中样式 */
+.contest-query-table .award-column,
+.contest-query-table .award-column * {
+    text-align: center !important;
+}
+
+/* 比赛信息网格样式 */
+.contest-info-grid {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 5px 10px;
+    align-items: center;
+    font-size: 0.85rem;
+    overflow-x: auto;
+}
+
+.contest-info-grid span {
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
+/* 时间轴奖项样式 */
+.timeline-award {
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.nav-link:hover {
+    color: #007bff !important;
+}
+
+.nav-link.active {
+    color: #007bff !important;
+}
+
+.nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 70%;
+    height: 2px;
+    background-color: #007bff;
+}
+
+/* 页面通用样式 */
+.page {
+    display: none;
+    padding: 1.5rem;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    margin-bottom: 2rem;
+}
+
+.page.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* 标题样式 */
+h1, h2, h3, h4, h5, h6 {
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+h2 {
+    font-size: 1.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+h3 {
+    font-size: 1.4rem;
+}
+
+h4 {
+    font-size: 1.2rem;
+}
+
+/* 表格样式 */
+table {
+    width: 100%;
+    margin-bottom: 1.5rem;
+    background-color: #ffffff;
+    border-collapse: collapse;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    font-size: 0.95rem;
+}
+
+table th {
     background-color: #f8f9fa;
+    color: #495057;
+    font-weight: 600;
+    text-align: center;
+    vertical-align: middle;
+    padding: 0.75rem 1rem;
+    border-bottom: 2px solid #dee2e6;
+    border-right: 1px solid #e9ecef;
+}
+
+table th:first-child {
+    text-align: left;
+}
+
+table th:last-child {
+    border-right: none;
+}
+
+table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #f0f0f0;
+    border-right: 1px solid #f0f0f0;
+    text-align: center;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+table td:first-child {
+    text-align: left;
+}
+
+table td:last-child {
+    border-right: none;
+}
+
+table tr:hover td {
+    background-color: #f8f9fa;
+    transform: translateY(-1px);
+}
+
+table tr:last-child td {
+    border-bottom: none;
+}
+
+/* 特殊字段对齐样式 - 保持左对齐 */
+.no-center {
+    text-align: left !important;
+}
+
+/* 选手排名表格样式优化 */
+.ranking-table-container {
+    overflow-x: auto;
+    margin-bottom: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.ranking-table {
+    width: 100%;
+    min-width: 700px;
+    background-color: #ffffff;
+    border-collapse: collapse;
+    border-radius: 8px;
+    /* 移除overflow: hidden，避免影响td滚动条显示 */
+}
+
+.ranking-table th {
+    background-color: #f8f9fa;
+    color: #495057;
+    font-weight: 600;
+    text-align: center;
+    vertical-align: middle;
+    padding: 0.75rem 1rem;
+    border-bottom: 2px solid #dee2e6;
+    border-right: 1px solid #e9ecef;
+    white-space: nowrap;
+}
+
+.ranking-table th.player-column {
+    min-width: 120px;
+    text-align: center;
+}
+
+.ranking-table th.award-column {
+    min-width: 300px;
+}
+
+.ranking-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #f0f0f0;
+    border-right: 1px solid #f0f0f0;
+    text-align: center;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+/* 比赛名称单元格样式 */
+.contest-name-cell {
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+/* 奖项和排名等数值类单元格样式 */
+.value-cell {
+    font-family: 'Consolas', monospace;
+    font-weight: 600;
+}
+
+.ranking-table td.player-name-cell {
+    min-width: 120px;
+    text-align: center;
+}
+
+/* 非0奖项单元格样式 */
+.award-cell-gold {
+    background-color: #ffd700 !important;
+    color: #333 !important;
+    font-weight: 600 !important;
+}
+
+.award-cell-silver {
+    background-color: #c0c0c0 !important;
+    color: #333 !important;
+    font-weight: 600 !important;
+}
+
+.award-cell-bronze {
+    background-color: #cd7f32 !important;
+    color: white !important;
+    font-weight: 600 !important;
+}
+
+.award-cell-iron {
+    background-color: #8b8b8b !important;
+    color: white !important;
+    font-weight: 600 !important;
+}
+
+/* 表单样式 */
+.form-control {
+    border: 1px solid #d0d5dd;
+    border-radius: 6px;
+    padding: 0.5rem 0.75rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+    outline: none;
+}
+
+.btn {
+    border-radius: 6px;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    transition: all 0.2s ease;
+    border: none;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #545b62;
 }
 
 /* 队伍名称悬停显示成员的样式 */
 .team-name {
     position: relative;
     cursor: help;
-    border-bottom: 1px dotted #0d6efd;
-    color: #0d6efd;
+    border-bottom: 1px dotted #007bff;
+    color: #007bff;
+    font-weight: 500;
 }
 
 .team-name::after {
     content: attr(data-members);
     position: absolute;
     bottom: 100%;
-    left: 0;
+    left: 50%;
+    transform: translateX(-50%);
     margin-bottom: 5px;
     padding: 8px 12px;
     background-color: #333;
@@ -26,6 +403,7 @@ body {
     transition: opacity 0.2s, visibility 0.2s;
     z-index: 1000;
     font-size: 0.9em;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
 .team-name:hover::after {
@@ -33,51 +411,396 @@ body {
     visibility: visible;
 }
 
-/* 为时间轴中的队伍名称添加特殊样式 */
-.timeline-content p strong + .team-name {
-    border-bottom: 1px dotted #0d6efd;
-}
-
-.page {
-    display: none; /* 默认隐藏所有页面 */
-}
-
-.page.active {
-    display: block; /* 只显示当前活动页面 */
-}
-
-/* Timeline 样式 */
+/* 时间轴样式 */
 .timeline {
     position: relative;
     padding: 20px 0;
+    overflow: hidden;
 }
+
+.season-heading {
+    position: relative;
+    z-index: 10;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #495057;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    padding-left: 45px;
+}
+
 .timeline::before {
     content: '';
     position: absolute;
     top: 0;
     left: 18px;
     height: 100%;
-    width: 4px;
+    width: 2px;
     background: #e9ecef;
+    z-index: 1;
 }
+
 .timeline-item {
     position: relative;
     margin-bottom: 20px;
-    padding-left: 40px;
+    padding-left: 45px;
+    transition: all 0.3s ease;
 }
-.timeline-item::before {
-    content: '';
-    position: absolute;
-    left: 11px;
-    top: 5px;
-    width: 15px;
-    height: 15px;
-    border-radius: 50%;
-    background: #0d6efd;
-    border: 3px solid #fff;
-    z-index: 1;
+
+.timeline-item:hover {
+    transform: translateY(-2px);
 }
+
 .timeline-date {
-    font-weight: bold;
+    font-weight: 600;
     color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.timeline-content {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 6px;
+    border-left: 3px solid #007bff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+}
+
+.timeline-item:hover .timeline-content {
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+}
+
+/* 选手简介卡片样式 */
+.player-profile {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+/* 奖项颜色区分 - 优化版本：减少渐变和边框，统一样式 */
+.award-gold {
+    color: #ffd700;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.award-silver {
+    color: #c0c0c0;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.award-bronze {
+    color: #cd7f32;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.award-iron {
+    color: #808080;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+/* 奖项数据单元格颜色样式 */
+.award-cell-gold {
+    background-color: rgba(255, 215, 0, 0.1);
+    color: #ffd700;
+    font-weight: bold;
+}
+
+.award-cell-silver {
+    background-color: rgba(192, 192, 192, 0.1);
+    color: #c0c0c0;
+    font-weight: bold;
+}
+
+.award-cell-bronze {
+    background-color: rgba(205, 127, 50, 0.1);
+    color: #cd7f32;
+    font-weight: bold;
+}
+
+.award-cell-iron {
+    background-color: rgba(128, 128, 128, 0.1);
+    color: #808080;
+    font-weight: bold;
+}
+
+/* 奖牌详情单元格样式 - 确保固定高度和宽度 */
+.award-detail-cell {
+    text-align: left !important;
+    padding: 8px !important;
+    min-width: 300px;
+    max-width: 300px;
+    position: relative;
+    height: 48px; /* 增加高度为滚动条留出空间 */
+    box-sizing: border-box;
+    overflow: visible; /* 确保滚动条可见 */
+}
+
+/* 比赛查询页面奖项列居中样式 */
+#search-contest .award-detail-cell {
+    text-align: center !important;
+}
+
+/* 奖牌详情内容包装器 - 优化滚动条显示和内容滚动 */
+.award-content-wrapper {
+    /* 核心滚动属性 */
+    overflow-x: auto; /* 只有内容超出时才显示滚动条 */
+    overflow-y: hidden; /* 禁止纵向滚动条 */
+    white-space: nowrap; /* 防止内容换行 */
+    
+    /* 滚动条空间控制 */
+    padding-bottom: 4px; /* 为滚动条预留空间 */
+    height: 100%; /* 填充整个单元格高度 */
+    
+    /* 布局属性 */
+    display: block; /* 确保正确的宽度计算 */
+    min-width: 100%; /* 确保容器宽度足够 */
+    
+    /* 滚动行为优化 */
+    -webkit-overflow-scrolling: touch; /* 平滑滚动 */
+    scroll-behavior: smooth; /* 平滑滚动效果 */
+    
+    /* 其他基础样式 */
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+/* Firefox滚动条样式 - 半透明效果 */
+.award-content-wrapper {
+    scrollbar-width: thin; /* 强制显示滚动条 */
+    scrollbar-color: rgba(150, 150, 150, 0.5) rgba(0, 0, 0, 0.02); /* 半透明效果 */
+}
+
+.award-content-wrapper:hover {
+    scrollbar-color: rgba(100, 100, 100, 0.7) rgba(0, 0, 0, 0.05); /* 悬停时增加不透明度 */
+}
+
+/* Chrome/Safari滚动条样式 - 半透明效果 */
+.award-content-wrapper::-webkit-scrollbar {
+    height: 6px; /* 默认显示足够粗的滚动条 */
+    width: 6px;
+}
+
+.award-content-wrapper::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.02); /* 非常淡的半透明背景 */
+    border-radius: 3px;
+}
+
+.award-content-wrapper::-webkit-scrollbar-thumb {
+    background: rgba(150, 150, 150, 0.5); /* 半透明滑块 */
+    border-radius: 3px;
+    transition: background 0.2s ease;
+}
+
+.award-content-wrapper::-webkit-scrollbar-thumb:hover {
+    background: rgba(100, 100, 100, 0.7); /* 悬停时增加不透明度 */
+}
+
+/* 奖项单元格居中对齐样式 */
+.award-center-cell {
+    text-align: center !important;
+}
+
+/* 比赛级别颜色区分 */
+.level-regional-final {
+    color: #d32f2f;
+    font-weight: 600;
+    padding: 2px 6px;
+    background-color: #ffebee;
+    border-radius: 3px;
+}
+
+.level-national {
+    color: #1976d2;
+    font-weight: 600;
+    padding: 2px 6px;
+    background-color: #e3f2fd;
+    border-radius: 3px;
+}
+
+.level-regional {
+    color: #388e3c;
+    font-weight: 600;
+    padding: 2px 6px;
+    background-color: #e8f5e9;
+    border-radius: 3px;
+}
+
+.level-invitation {
+    color: #f57c00;
+    font-weight: 600;
+    padding: 2px 6px;
+    background-color: #fff3e0;
+    border-radius: 3px;
+}
+
+.level-provincial {
+    color: #7b1fa2;
+    font-weight: 600;
+    padding: 2px 6px;
+    background-color: #f3e5f5;
+    border-radius: 3px;
+}
+
+.level-girls {
+    color: #c2185b;
+    font-weight: 600;
+    padding: 2px 6px;
+    background-color: #fce4ec;
+    border-radius: 3px;
+}
+
+.level-online {
+    color: #607d8b;
+    font-weight: 600;
+    padding: 2px 6px;
+    background-color: #eceff1;
+    border-radius: 3px;
+}
+
+/* 比赛类别颜色区分 - 与比赛级别样式保持一致 */
+.type-icpc {
+    color: #009688;
+    font-weight: 600;
+    padding: 2px 6px;
+    background-color: #e0f2f1;
+    border-radius: 3px;
+}
+
+.type-ccpc {
+    color: #ff9800;
+    font-weight: 600;
+    padding: 2px 6px;
+    background-color: #fff3e0;
+    border-radius: 3px;
+}
+
+.type-other {
+    color: #795548;
+    font-weight: 600;
+    padding: 2px 6px;
+    background-color: #f5f5f5;
+    border-radius: 3px;
+}
+
+/* 队伍名称不居中样式 */
+.team-name-cell {
+    text-align: left !important;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .page {
+        padding: 1rem;
+    }
+    
+    h2 {
+        font-size: 1.5rem;
+    }
+    
+    table {
+        font-size: 0.9rem;
+    }
+    
+    .timeline-item {
+        padding-left: 35px;
+    }
+    
+    .timeline::before {
+        left: 12px;
+    }
+    
+    .timeline-item::before {
+        left: 3px;
+        width: 16px;
+        height: 16px;
+    }
+    
+    .season-heading {
+        padding-left: 35px;
+    }
+}
+
+@media (max-width: 576px) {
+    .navbar-brand {
+        font-size: 1.1rem;
+    }
+    
+    .nav-link {
+        padding: 0.75rem 0.5rem;
+    }
+    
+    table th, table td {
+        padding: 0.5rem;
+    }
+    
+    .btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* 加载动画 */
+.loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* 搜索结果高亮 */
+.search-highlight {
+    background-color: #fff9c4;
+    padding: 0 2px;
+    border-radius: 2px;
+}
+
+/* 卡片阴影效果 */
+.card {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    transition: box-shadow 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+/* 比赛查询简介样式 */
+.contest-info {
+    margin-bottom: 1rem !important;
+    padding: 1rem !important;
+}
+
+.contest-info h4 {
+    margin-bottom: 0.75rem !important;
+    font-size: 1.1rem !important;
+}
+
+.contest-info .grid {
+    gap: 0.5rem !important;
+}
+
+.contest-info .grid div {
+    font-size: 0.95rem;
 }
