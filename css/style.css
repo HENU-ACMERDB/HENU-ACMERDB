@@ -699,6 +699,26 @@ table tr:last-child td {
     text-align: left !important;
 }
 
+/* 所有记录页：日期和选手名保持单行显示 */
+#all-records .record-date-cell,
+#all-records .record-player-cell {
+    white-space: nowrap;
+}
+
+#all-records .record-contest-cell {
+    max-width: 260px;
+    line-height: 1.35;
+}
+
+#all-records .team-name-cell {
+    max-width: 180px;
+    line-height: 1.35;
+}
+
+#all-records .team-name {
+    white-space: normal;
+}
+
 /* 响应式设计 */
 @media (max-width: 768px) {
     .page {

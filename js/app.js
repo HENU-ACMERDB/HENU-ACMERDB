@@ -120,7 +120,7 @@ const templates = {
             <table class="table table-striped table-hover table-sm">
                 <thead id="all-records-thead">
                     <tr>
-                        <th>日期</th><th>比赛名称</th><th>级别</th><th>选手</th><th>队伍</th><th>奖项</th><th>排名</th>
+                        <th class="record-date-cell">日期</th><th>比赛名称</th><th>级别</th><th class="record-player-cell">选手</th><th>队伍</th><th>奖项</th><th>排名</th>
                     </tr>
                 </thead>
                 <tbody id="all-records-tbody"></tbody>
@@ -194,7 +194,7 @@ function updateAllRecordsTableHeader() {
     if (!allRecordsThead) return;
     
     let theadHtml = '<tr>';
-    theadHtml += '<th>日期</th><th>比赛名称</th><th>级别</th><th>选手</th><th>队伍</th><th>奖项</th><th>排名</th>';
+    theadHtml += '<th class="record-date-cell">日期</th><th>比赛名称</th><th>级别</th><th class="record-player-cell">选手</th><th>队伍</th><th>奖项</th><th>排名</th>';
     if (userSettings.showSolved) theadHtml += '<th>通过数</th>';
     if (userSettings.showPenalty) theadHtml += '<th>罚时</th>';
     if (userSettings.showContestType) theadHtml += '<th>比赛类型</th>';
@@ -1423,10 +1423,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
             html += `<tr>
-                        <td>${r.date || 'N/A'}</td>
-                        <td>${r.contestName || r.contest || ''}</td>
+                        <td class="record-date-cell">${r.date || 'N/A'}</td>
+                        <td class="record-contest-cell">${r.contestName || r.contest || ''}</td>
                         <td><span class="${levelClass}">${r.contestLevel || ''}</span></td>
-                        <td>${r.name || ''}</td>
+                        <td class="record-player-cell">
+                            ${r.name ? `<a href="#search-player" class="text-primary player-name-link" data-player-name="${r.name}">${r.name}</a>` : ''}
+                        </td>
                         <td class="team-name-cell">${teamWithTooltip}</td>
                         <td><span class="${awardClass}">${r.award || ''}</span></td>
                         <td>${r.rank > 0 ? r.rank : 'N/A'}</td>`;
@@ -1437,6 +1439,19 @@ document.addEventListener('DOMContentLoaded', () => {
             html += `</tr>`;
         });
         tbody.innerHTML = html;
+        if (!tbody.dataset.playerLinkBound) {
+            tbody.addEventListener('click', function(e) {
+                if (e.target.classList.contains('player-name-link')) {
+                    e.preventDefault();
+                    const playerName = e.target.getAttribute('data-player-name');
+                    const urlParams = new URLSearchParams();
+                    urlParams.set('player', playerName);
+                    window.history.pushState({}, '', `${window.location.pathname}?page=search-player&${urlParams}`);
+                    navigateTo('search-player');
+                }
+            });
+            tbody.dataset.playerLinkBound = 'true';
+        }
         console.log('所有记录渲染完成');
     }
 
